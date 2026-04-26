@@ -6,6 +6,7 @@ import javax.json.JsonObject;
 
 import DataBase.JsonFileImplementation;
 
+import java.io.IOException;
 import java.sql.SQLException;
 
 public class JsonCreateCommand implements Command {
@@ -41,6 +42,8 @@ public class JsonCreateCommand implements Command {
             return error("Champ manquant : " + e.getMessage());
         } catch (SQLException e) {
             return error("Erreur base de données : " + e.getMessage());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 

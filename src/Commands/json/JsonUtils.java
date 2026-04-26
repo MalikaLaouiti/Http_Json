@@ -17,6 +17,17 @@ public class JsonUtils {
         }
     }
 
+    public static String optString(JsonObject obj, String key) {
+        if (obj == null || !obj.containsKey(key)) {
+            return "";
+        }
+        try {
+            return obj.getString(key);
+        } catch (ClassCastException e) {
+            return "";
+        }
+    }
+
     public static JsonArray optJsonArray(JsonObject obj, String key) {
         if (obj == null || !obj.containsKey(key)) {
             return null;

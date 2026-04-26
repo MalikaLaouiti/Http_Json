@@ -3,7 +3,10 @@ package Services;
 
 import javax.json.Json;
 import javax.json.JsonObject;
+import javax.json.JsonObjectBuilder;
+import javax.json.JsonReader;
 
+import java.io.StringReader;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -17,7 +20,7 @@ public class HttpServiceImpl implements IHTTPService {
 
     public HttpServiceImpl() {
         this.client = HttpClient.newBuilder()
-                .connectTimeout(Duration.ofSeconds(10))
+                .connectTimeout(Duration.ofSeconds(30))
                 .build();
     }
 
@@ -86,11 +89,24 @@ public class HttpServiceImpl implements IHTTPService {
     }
 
     private String send(HttpRequest request) throws Exception {
-        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-        // On retourne un JSON avec status + body pour que le client ait l'info complète
+        HttpResponse<String> response = client.send(request,
+                HttpResponse.BodyHandlers.ofString());
+
+        String rawBody = response.body();
+        JsonObjectBuilder builder = Json.createObjectBuilder()
+                .add("http_status", response.statusCode());
+
+        // Tente de parser le body comme JSON
+        try (JsonReader reader = Json.createReader(new StringReader(rawBody))) {
+            builder.add("body", reader.read());
+        } catch (Exception e) {
+            // Body non-JSON (HTML, texte...)
+            builder.add("body", rawBody);
+        }
+
         return Json.createObjectBuilder()
-                .add("http_status", response.statusCode())
-                .add("body", response.body())
-                .toString();
+                .add("status", "OK")
+                .add("data", builder.build())
+                .build().toString();
     }
 }
