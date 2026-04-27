@@ -4,6 +4,7 @@ out/
 !**/src/test/**/out/
 .kotlin
 !**/src/DataBase/DataBaseConfig
+src/DataBase/DataBaseConfig.java
 
 ### Eclipse ###
 .apt_generated
