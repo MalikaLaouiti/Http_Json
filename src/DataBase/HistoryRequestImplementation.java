@@ -27,27 +27,27 @@ public class HistoryRequestImplementation {
         }
     }
 
-    public JsonArray getForClient(String clientId, int limit) throws SQLException {
-        String sql = """
-                SELECT id, client_id, service, operation, target,
-                       status, message, executed_at
-                FROM   request_history
-                WHERE  client_id = ?
-                ORDER  BY executed_at DESC
-                LIMIT  ?
-                """;
-
-        JsonArrayBuilder builder = Json.createArrayBuilder();
-        try (PreparedStatement ps = DataBaseConnection.getInstance().prepareStatement(sql)) {
-            ps.setString(1, clientId);
-            ps.setInt(2, limit);
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                builder.add(rowToJson(rs));
-            }
-        }
-        return builder.build();
-    }
+//    public JsonArray getForClient(String clientId, int limit) throws SQLException {
+//        String sql = """
+//                SELECT id, client_id, service, operation, target,
+//                       status, message, executed_at
+//                FROM   request_history
+//                WHERE  client_id = ?
+//                ORDER  BY executed_at DESC
+//                LIMIT  ?
+//                """;
+//
+//        JsonArrayBuilder builder = Json.createArrayBuilder();
+//        try (PreparedStatement ps = DataBaseConnection.getInstance().prepareStatement(sql)) {
+//            ps.setString(1, clientId);
+//            ps.setInt(2, limit);
+//            ResultSet rs = ps.executeQuery();
+//            while (rs.next()) {
+//                builder.add(rowToJson(rs));
+//            }
+//        }
+//        return builder.build();
+//    }
 
     public JsonArray getAll(int limit) throws SQLException {
         String sql = """

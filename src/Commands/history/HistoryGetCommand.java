@@ -17,11 +17,11 @@ public class HistoryGetCommand implements Command {
     @Override
     public JsonObject execute(JsonObject request) {
         try {
-            String client = request.getString("client");
+
             int limit = request.containsKey("limit")
                     ? request.getInt("limit") : 50;
 
-            JsonArray entries = repo.getForClient(client, limit);
+            JsonArray entries = repo.getAll(limit);
 
             return Json.createObjectBuilder()
                     .add("status", "OK")

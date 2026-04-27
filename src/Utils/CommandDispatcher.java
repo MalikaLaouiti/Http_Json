@@ -1,5 +1,6 @@
 package Utils;
 
+import Commands.Admin.AuthCommand;
 import Commands.Command;
 import Commands.history.HistoryGetCommand;
 import Commands.http.*;
@@ -9,6 +10,7 @@ import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonReader;
 
+import DataBase.AuthAdmin;
 import DataBase.FileStoreManager;
 import DataBase.HistoryRequestImplementation;
 import DataBase.JsonFileImplementation;
@@ -28,24 +30,24 @@ public class CommandDispatcher {
     public CommandDispatcher() {
         try {
             FileStoreManager file=new FileStoreManager();
+            IHTTPService httpService = new HttpServiceImpl();
+            JsonFileImplementation repo  = new JsonFileImplementation(file);
+            AuthAdmin authAdmin = new AuthAdmin();
+            historyRepo= new HistoryRequestImplementation();
 
-        IHTTPService httpService = new HttpServiceImpl();
-        JsonFileImplementation repo  = new JsonFileImplementation(file);
-        historyRepo= new HistoryRequestImplementation();
+            commands.put("HTTP:GET",    new HttpGetCommand(httpService));
+            commands.put("HTTP:POST",   new HttpPostCommand(httpService));
+            commands.put("HTTP:add",    new HttpPutCommand(httpService));
+            commands.put("HTTP:PATCH",  new HttpPatchCommand(httpService));
+            commands.put("HTTP:DELETE", new HttpDeleteCommand(httpService));
 
-        commands.put("HTTP:GET",    new HttpGetCommand(httpService));
-        commands.put("HTTP:POST",   new HttpPostCommand(httpService));
-        commands.put("HTTP:add",    new HttpPutCommand(httpService));
-        commands.put("HTTP:PATCH",  new HttpPatchCommand(httpService));
-        commands.put("HTTP:DELETE", new HttpDeleteCommand(httpService));
-
-        commands.put("JSON:CREATE", new JsonCreateCommand(repo));
-        commands.put("JSON:GET",    new JsonGetCommand(repo));
-        commands.put("JSON:GETALL", new JsonGetAllCommand(repo));
-        commands.put("JSON:SET",    new JsonSetCommand(repo));
-        commands.put("JSON:DELETE", new JsonDeleteCommand(repo));
-
-        commands.put("HISTORY:GET", new HistoryGetCommand(historyRepo));
+            commands.put("JSON:CREATE", new JsonCreateCommand(repo));
+            commands.put("JSON:GET",    new JsonGetCommand(repo));
+            commands.put("JSON:GETALL", new JsonGetAllCommand(repo));
+            commands.put("JSON:SET",    new JsonSetCommand(repo));
+            commands.put("JSON:DELETE", new JsonDeleteCommand(repo));
+            commands.put("ADMIN:AUTH",  new AuthCommand(authAdmin));
+            commands.put("HISTORY:GET", new HistoryGetCommand(historyRepo));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

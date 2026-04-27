@@ -22,7 +22,6 @@ public class FileStoreManager {
         Files.createDirectories(file.getParent());
 
         try (BufferedWriter writer = Files.newBufferedWriter(file, StandardCharsets.UTF_8)) {
-            // Indentation manuelle simple pour lisibilité
             writer.write(prettyPrint(content));
         }
 
